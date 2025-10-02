@@ -5,8 +5,8 @@ const express = require('express');
 function createServer() {
   const app = express();
   let idCount = 0;
+  let idExperence = 0;
   let users = [];
-
   let expenses = [];
 
   app.get('/users', (req, res) => {
@@ -22,7 +22,7 @@ function createServer() {
   app.get('/users/:id', (req, res) => {
     const { id } = req.params;
 
-    if (typeof id !== 'string') {
+    if (!Number.isFinite(Number(id))) {
       res.sendStatus(400);
 
       return;
@@ -136,14 +136,22 @@ function createServer() {
     const { userId, spentAt, title, amount, category, note } = req.body;
     const findUser = users.find((person) => person.id === +userId);
 
-    if (!findUser) {
+    if (
+      !findUser ||
+      !userId ||
+      !spentAt ||
+      !title ||
+      !amount ||
+      !category ||
+      !note
+    ) {
       res.sendStatus(400);
 
       return;
     }
 
     const newExpenses = {
-      id: ++idCount,
+      id: ++idExperence,
       userId: +userId,
       spentAt: spentAt,
       title: title,
@@ -157,7 +165,7 @@ function createServer() {
     res.send(newExpenses);
   });
 
-  app.get('/expenses/:id', express.json(), (req, res) => {
+  app.get('/expenses/:id', (req, res) => {
     const { id } = req.params;
 
     const findExpenses = expenses.find((exp) => exp.id === +id);
@@ -191,13 +199,19 @@ function createServer() {
 
     const findExpenses = expenses.find((exp) => exp.id === +id);
 
-    if (!findExpenses) {
+    if (findExpenses === undefined) {
       res.sendStatus(404);
 
       return;
     }
 
-    if (!spentAt && !title && !amount && !category && !note) {
+    if (
+      spentAt === undefined &&
+      title === undefined &&
+      amount === undefined &&
+      category === undefined &&
+      note === undefined
+    ) {
       res.sendStatus(400);
 
       return;
