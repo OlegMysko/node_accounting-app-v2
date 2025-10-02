@@ -59,6 +59,13 @@ function createServer() {
 
   app.delete('/users/:id', (req, res) => {
     const { id } = req.params;
+
+    if (!Number.isFinite(Number(id))) {
+      res.sendStatus(400);
+
+      return;
+    }
+
     const newUsers = users.filter((person) => person.id !== +id);
 
     if (newUsers.length === users.length) {
@@ -74,7 +81,7 @@ function createServer() {
     const { id } = req.params;
     const { name } = req.body;
 
-    if (!id || typeof name !== 'string') {
+    if (!Number.isFinite(Number(id)) || typeof name !== 'string' || name === undefined) {
       res.sendStatus(400);
 
       return;
@@ -168,6 +175,12 @@ function createServer() {
   app.get('/expenses/:id', (req, res) => {
     const { id } = req.params;
 
+    if (!Number.isFinite(Number(id))) {
+      res.sendStatus(400);
+
+      return;
+    }
+
     const findExpenses = expenses.find((exp) => exp.id === +id);
 
     if (!findExpenses) {
@@ -180,6 +193,12 @@ function createServer() {
 
   app.delete('/expenses/:id', (req, res) => {
     const { id } = req.params;
+
+    if (!Number.isFinite(Number(id))) {
+      res.sendStatus(400);
+
+      return;
+    }
 
     const newExpenses = expenses.filter((exp) => exp.id !== +id);
 
@@ -195,6 +214,13 @@ function createServer() {
 
   app.patch('/expenses/:id', express.json(), (req, res) => {
     const { id } = req.params;
+
+    if (!Number.isFinite(Number(id))) {
+      res.sendStatus(400);
+
+      return;
+    }
+
     const { spentAt, title, amount, category, note } = req.body;
 
     const findExpenses = expenses.find((exp) => exp.id === +id);
